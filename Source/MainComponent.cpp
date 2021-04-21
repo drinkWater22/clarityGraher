@@ -1,5 +1,7 @@
 #include "MainComponent.h"
 
+#define SMA_AVERAGE 20
+
 //==============================================================================
 MainComponent::MainComponent()
 {
@@ -32,7 +34,7 @@ MainComponent::MainComponent()
     grapher2.setVerticalZoom(2.0);
     grapher2.setHorizontalZoom(0.01);
 
-    cache1 = createCache(5);
+    cache1 = createCache(SMA_AVERAGE);
 
 }
 
@@ -65,7 +67,7 @@ void MainComponent::getNextAudioBlock (const juce::AudioSourceChannelInfo& buffe
 		auto* outBuffer = bufferToFill.buffer->getWritePointer(channel, bufferToFill.startSample);
 		for(auto sample = 0; sample < bufferToFill.numSamples; ++sample)
 		{
-			outBuffer[sample] = simpleMovingAverage(5, inBuffer[sample], cache1);
+			outBuffer[sample] = simpleMovingAverage(SMA_AVERAGE, inBuffer[sample], cache1);
 		}
 	}
 
@@ -105,7 +107,7 @@ float MainComponent::simpleMovingAverage(int period, float dataPoint, float* cac
 {
 	static int count = 0;
 	float accumulator = 0;
-	if( count >= 5 )
+	if( count >= SMA_AVERAGE )
 	{
 		for(int i = 0; i < period-1; i++)
 		{
